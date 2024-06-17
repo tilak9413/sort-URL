@@ -15,11 +15,21 @@ routes.patch("/:id", patchdata);
 
 routes.get("/:urlID", async (req, res) => {
   const shortID = req.params.urlID;
-  const entry = await url.findOneAndUpdate(
-    { shortID },
-    { visitHistory: { timestamp: Date.now() } }
-  );
-  res.redirect(entry.redirectURL);
+  try {
+    const entry = await url.findOneAndUpdate(
+      { shortID },
+      { $push: { visitHistory: { timestamp: Date.now() } } },
+      { new: true } // Return the updated document
+    );
+
+    if (!entry) {
+      return res.status(404).send("URL not found");
+    }
+
+    res.redirect(entry.redirectURL);
+  } catch (error) {
+    res.status(500).send("Internal server error");
+  }
 });
 
-module.exports = routes;
+module.exports = routes; // Corrected export statement
