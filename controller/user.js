@@ -4,7 +4,7 @@ const User = require("../models/user");
 
 async function handledatapost(req, res) {
   const { name, Email, password } = req.body;
-  console.log("hello2");
+
   if (!name || !Email || !password) {
     return res.render("signup");
   }
@@ -29,9 +29,10 @@ async function handlelogin(req, res) {
   if (!loginuser) {
     return res.render("login");
   }
-  const sessionID = uuidv4();
-  setUser(sessionID, User);
-  res.cookie("uid", sessionID);
+
+  const token = setUser(loginuser); // Set the logged-in user
+
+  res.cookie("uid", token);
   return res.render("index");
 }
 

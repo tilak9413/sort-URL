@@ -3,7 +3,7 @@ const signupRouter = require("./router/user");
 const connectmongoose = require("./connection/connection");
 const staticrouter = require("./router/staticrouter");
 const cookieparser = require("cookie-parser");
-const redirectuserlogin = require("./middleware/auth")
+const redirectuserlogin = require("./middleware/auth");
 
 const path = require("path");
 const PORT = 8001;
@@ -17,7 +17,10 @@ app.set("views", path.resolve("./view"));
 
 // Define static routes first
 app.use("/", staticrouter);
-app.use("/users",  redirectuserlogin,  signupRouter);
+app.use("/users", signupRouter);
+
+// Apply authentication middleware to protected routes
+app.use("/protected", redirectuserlogin);
 
 connectmongoose("mongodb://127.0.0.1:27017/emp");
 
